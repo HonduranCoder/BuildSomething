@@ -7,15 +7,17 @@ describe('BuildSomething routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
+  beforeEach(async () => {
+    await request(app).post('/jokes');
+  });
 
-  it('creates a new joke in our database and sends a text message', () => {
+  it('creates a new joke in our database', () => {
     return request(app)
-      .post('icanhazdadjoke.com/slack')
-      .send({ joke: 'haha' })
+      .post('/jokes')
       .then((res) => {
         // expect(createMessage).toHaveBeenCalledTimes(1);
         expect(res.body).toEqual({
-          id: expect.any(String),
+          id: '2',
           joke: expect.any(String),
         });
       });
@@ -23,7 +25,7 @@ describe('BuildSomething routes', () => {
 
   it('it gets an order in the db by id', () => {
     return request(app)
-      .get('icanhazdadjoke.com/slack')
+      .get('/jokes/1')
       .then((res) => {
         expect(res.body).toEqual({
           id: expect.any(String),
@@ -34,7 +36,7 @@ describe('BuildSomething routes', () => {
 
   it('it gets all orders', () => {
     return request(app)
-      .get('icanhazdadjoke.com/slack')
+      .get('/jokes')
       .then((res) => {
         expect(res.body).toEqual(
           expect.arrayContaining([
@@ -49,7 +51,7 @@ describe('BuildSomething routes', () => {
 
   it('it updates an order by id', () => {
     return request(app)
-      .put('icanhazdadjoke.com/slack')
+      .put('/jokes/1')
       .send({ joke: 'haha' })
       .then((res) => {
         expect(res.body).toEqual({
@@ -61,9 +63,9 @@ describe('BuildSomething routes', () => {
 
   it('it deletes an order in the db by id', () => {
     return request(app)
-      .delete('icanhazdadjoke.com/slack')
+      .delete('/jokes/1')
       .then((res) => {
-        expect(res.body).toEqual({ id: '1', quantity: 12 });
+        expect(res.body).toEqual({ id: '1', joke: expect.any(String) });
       });
   });
 });
